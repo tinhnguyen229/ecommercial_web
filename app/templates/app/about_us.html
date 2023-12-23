@@ -1,0 +1,14 @@
+{%extends 'app/base.html'%}
+{% load static %}
+
+{%block title%}
+    About us
+{% endblock %}
+
+{% block main_content %}
+    <h1 style="margin-bottom: 20px">About us</h1>
+    {% if user %}
+    <h2>{{user.username}}</h2>
+    {% endif %}
+    <p>{%lorem 20 p%}</p>
+{% endblock %}
