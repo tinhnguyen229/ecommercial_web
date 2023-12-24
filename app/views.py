@@ -153,6 +153,7 @@ def detail(request):
         'total_order_items': total_order_items,
         'user_login': user_login,
         'user_not_login': user_not_login,
+        'categories': Category.objects.filter(is_sub=False)
     }
     return render(request, template_name='app/detail.html', context=context)
 
@@ -180,7 +181,8 @@ def cart(request):
             'nav': 'cart',
             'total_order_items': total_order_items,
             'user_login': user_login,
-            'user_not_login': user_not_login
+            'user_not_login': user_not_login,
+            'categories': Category.objects.filter(is_sub=False)
         }
     except Exception as e:
         _logger.error(e)
@@ -211,7 +213,8 @@ def checkout(request):
             'order_items': order_items,
             'total_order_items': total_order_items,
             'user_login': user_login,
-            'user_not_login': user_not_login
+            'user_not_login': user_not_login,
+            'categories': Category.objects.filter(is_sub=False)
         })
     except Exception as e:
         _logger.error(str(e))
