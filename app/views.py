@@ -112,7 +112,8 @@ def search(request):
             'keys': keys,
             'total_order_items': total_order_items,
             'user_login': user_login,
-            'user_not_login': user_not_login
+            'user_not_login': user_not_login,
+            'categories': Category.objects.filter(is_sub=False)
         }
         return render(request, template_name='app/search.html', context=context)
     except Exception as e:
@@ -121,7 +122,6 @@ def search(request):
 
 
 def category(request):
-    print(request.GET)
     categories = Category.objects.filter(is_sub=False)
     active_category = request.GET.get('category', '')
     if active_category:
