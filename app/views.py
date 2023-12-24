@@ -1,13 +1,15 @@
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
-from .models import *
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib import messages
-from django.shortcuts import render, redirect
 import json
 import logging
+
+from .models import *
+
+from django.http import HttpResponse, JsonResponse
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
+
 _logger = logging.Logger('__name__')
 
 
@@ -80,7 +82,8 @@ def home(request):
         'nav': 'home',
         'total_order_items': total_order_items,
         'user_login': user_login,
-        'user_not_login': user_not_login
+        'user_not_login': user_not_login,
+        'categories': Category.objects.filter(is_sub=False)
     }
     return render(request, template_name='app/home.html', context=context)
 
@@ -109,12 +112,50 @@ def search(request):
             'keys': keys,
             'total_order_items': total_order_items,
             'user_login': user_login,
-            'user_not_login': user_not_login
+            'user_not_login': user_not_login,
+            'categories': Category.objects.filter(is_sub=False)
         }
         return render(request, template_name='app/search.html', context=context)
     except Exception as e:
         _logger.error(e, exc_info=True)
         return redirect(to='home')
+
+
+def category(request):
+    categories = Category.objects.filter(is_sub=False)
+    active_category = request.GET.get('category', '')
+    if active_category:
+        products = Product.objects.filter(category__slug=active_category)
+    context = {
+        'categories': categories,
+        'active_category': active_category,
+        'products': products,
+    }
+    return render(request, template_name='app/category.html', context=context)
+
+def detail(request):
+    total_order_items = 0
+    if request.user.is_authenticated:
+        customer = request.user
+        order_items, created = Order.objects.get_or_create(customer=customer, complete=False)
+        total_order_items = order_items.get_total_order_item_quantity
+        user_login = 'show'
+        user_not_login = 'hidden'
+    else:
+        user_login = 'hidden'
+        user_not_login = 'show'
+
+    id = request.GET.get('id')
+    product = Product.objects.filter(id=id)
+
+    context = {
+        'product': product[0],
+        'total_order_items': total_order_items,
+        'user_login': user_login,
+        'user_not_login': user_not_login,
+    }
+    return render(request, template_name='app/detail.html', context=context)
+
 
 def cart(request):
     try:
