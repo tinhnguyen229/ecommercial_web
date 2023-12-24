@@ -133,6 +133,29 @@ def category(request):
     }
     return render(request, template_name='app/category.html', context=context)
 
+def detail(request):
+    total_order_items = 0
+    if request.user.is_authenticated:
+        customer = request.user
+        order_items, created = Order.objects.get_or_create(customer=customer, complete=False)
+        total_order_items = order_items.get_total_order_item_quantity
+        user_login = 'show'
+        user_not_login = 'hidden'
+    else:
+        user_login = 'hidden'
+        user_not_login = 'show'
+
+    id = request.GET.get('id')
+    product = Product.objects.filter(id=id)
+
+    context = {
+        'product': product[0],
+        'total_order_items': total_order_items,
+        'user_login': user_login,
+        'user_not_login': user_not_login,
+    }
+    return render(request, template_name='app/detail.html', context=context)
+
 
 def cart(request):
     try:

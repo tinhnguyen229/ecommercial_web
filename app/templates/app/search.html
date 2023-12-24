@@ -16,7 +16,7 @@
                 <h6><strong>{{key.name}}</strong></h6>
                 <hr>
                 <button data-product={{key.id}} data-action="add" class="btn btn-outline-secondary add-btn update-cart">Thêm vào giỏ hàng</button>
-                <a class="btn btn-outline-success" href="#">Xem</a>
+                <a class="btn btn-outline-success" href="{% url 'detail' %}?id={{key.id}}">Xem</a>
                 <h3 style="display: inline-block; float: right"><strong>{{key.price}}</strong></h3>
             </div>
         </div>
