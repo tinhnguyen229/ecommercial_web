@@ -82,7 +82,8 @@ def home(request):
         'nav': 'home',
         'total_order_items': total_order_items,
         'user_login': user_login,
-        'user_not_login': user_not_login
+        'user_not_login': user_not_login,
+        'categories': Category.objects.filter(is_sub=False)
     }
     return render(request, template_name='app/home.html', context=context)
 
@@ -117,6 +118,21 @@ def search(request):
     except Exception as e:
         _logger.error(e, exc_info=True)
         return redirect(to='home')
+
+
+def category(request):
+    print(request.GET)
+    categories = Category.objects.filter(is_sub=False)
+    active_category = request.GET.get('category', '')
+    if active_category:
+        products = Product.objects.filter(category__slug=active_category)
+    context = {
+        'categories': categories,
+        'active_category': active_category,
+        'products': products,
+    }
+    return render(request, template_name='app/category.html', context=context)
+
 
 def cart(request):
     try:

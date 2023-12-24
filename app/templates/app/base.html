@@ -69,12 +69,13 @@
                    aria-haspopup="true" aria-expanded="false">
                     Sản phẩm
                 </a>
+
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">Sữa</a>
-                    <a class="dropdown-item" href="#">Sữa</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Sữa</a>
+                    {% for category in categories %}
+                    <a class="dropdown-item" href="{% url 'category' %}?category={{category.slug}}">{{category.name}}</a>
+                    {% endfor %}
                 </div>
+
             </li>
 
             <li class="nav-item {% if nav == 'about_us' %}active{% endif %}">
