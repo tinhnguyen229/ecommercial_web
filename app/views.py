@@ -257,3 +257,32 @@ def update_item(request):
     if order_item.quantity <= 0:
         order_item.delete()
     return JsonResponse('added', safe=False)
+
+
+def input_shipping_info(request):
+    if request.method == 'POST':
+        req = request.POST
+        name = req.get('name', '')
+        email = req.get('email', '')
+        mobile = req.get('mobile', '')
+        address = req.get('address', '')
+        city = req.get('city', '')
+
+    if request.user.is_authenticated:
+        customer = request.user
+        order, order_created = Order.objects.get_or_create(customer=customer, complete=False)
+        shipping_address, shipping_address_created = ShippingAddress.objects.get_or_create(customer=customer, order=order)
+        if order.orderitem_set.all():
+            shipping_address.name = name
+            shipping_address.email = email
+            shipping_address.mobile = mobile
+            shipping_address.address = address
+            shipping_address.city = city
+            shipping_address.save()
+
+            order.complete = True
+            order.save()
+        else:
+            print('chua co gi de ma checkout')
+            return HttpResponse('chua co gi de ma checkout')
+    return redirect(to='home')
